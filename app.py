@@ -20,7 +20,7 @@ def load_data():
 df = load_data()
 
 if df is None:
-    st.error(f"⚠️ مش قادر ألاقي ملف الإكسيل! اتأكد إنك رافع ملف اسمه `{EXCEL_FILE}` على GitHub.")
+    st.error(f"⚠️️ مش قادر ألاقي ملف الإكسيل! اتأكد إنك رافع ملف اسمه `{EXCEL_FILE}` على GitHub.")
 else:
     fam_col, type_col, sub_col = df.columns[0], df.columns[1], df.columns[2]
     
@@ -80,9 +80,8 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
         # TAB 2: UPLOADED IMAGES
         # ==========================================
         with tab2:
-            st.write("استخدم التاب دي لو هترفع الصور بإيدك جوا شات Gemini.")
-            images_input = st.text_area("حط أسماء أو أرقام الصور هنا (اختياري - عشان ينظمهم):", height=150, key="images")
-            images_data = images_input if images_input.strip() else "[PLEASE SEE THE ATTACHED IMAGES IN THIS CHAT]"
+            st.write("استخدم التاب دي لو هترفع الصور هنا في شات Gemini مباشرة.")
+            st.success("الأسطمبة دي مبرمجة إنها تقرأ اسم الصورة (Filename) أوتوماتيك من الملف اللي هترفعه.")
             
             image_prompt = f"""**Role:**
 Act as an expert e-commerce visual inventory categorizer and listing generator.
@@ -95,7 +94,8 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 2. **Out of Scope:** If the image clearly shows an item that does not belong to the Target Family at all, output "Not {selected_family}" for both Type and Subtype.
 3. **Visual Extraction:** Carefully examine the image to extract the Brand, Color, and Size/Dimensions. If an attribute cannot be determined from the image, output "N/A".
 4. **Content Generation:** Write a catchy e-commerce title and a powerful description in English.
-5. **Translation:** Provide a natural, highly engaging Arabic translation for the title, description, and features (do not use literal/robotic translation).
+5. **Translation:** Provide a natural, highly engaging Arabic translation for the title, description, and features.
+6. **Image Identification:** You MUST use the exact original filename of each uploaded image as its identifier. Do not skip this.
 
 ---
 ### 📥 Input Data:
@@ -107,13 +107,13 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 {taxonomy_text}
 
 **Images to Process:**
-{images_data}
+[PLEASE SEE THE ATTACHED IMAGES IN THIS CHAT]
 
 ---
 ### 📤 Output Format:
 *Please analyze each attached image and output the results using the EXACT following structure:*
 
-**Original Input:** [Insert Image Name/Number here]
+**Original Input:** [Exact Filename of the Attached Image]
 * **Categorization:**
   * **Family:** {selected_family}
   * **Type:** [Strictly from taxonomy]
