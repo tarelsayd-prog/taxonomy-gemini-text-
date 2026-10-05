@@ -8,7 +8,7 @@ st.title("🤖 Gemini Taxonomy Prompt Generator")
 st.write("اختار الفاميلي، حط الـ Titles، وانسخ البرومت لـ Gemini.")
 
 # اسم ملف الإكسيل اللي موجود معاك في نفس الفولدر على GitHub
-EXCEL_FILE = "taxonomy.xlsx" 
+EXCEL_FILE = "taxonomy for gemini.xlsx"
 
 @st.cache_data
 def load_data():
