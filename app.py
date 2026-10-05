@@ -1,74 +1,53 @@
-import streamlit as st
-import pandas as pd
-import os
+**Role:**
+Act as an expert e-commerce listing generator and inventory categorizer.
 
-st.set_page_config(page_title="Gemini Prompt Generator", layout="centered")
+**Task:**
+I will provide you with a target Product Family, a strict Taxonomy (Types and Subtypes), and a list of SKUs/Product Titles (and/or product images). For every item, you must analyze the provided text/image and generate a complete, bilingual e-commerce profile.
 
-st.title("🤖 Gemini Taxonomy Prompt Generator")
-st.write("Select the Family, paste your Titles/SKUs, and copy the ready prompt for Gemini.")
+**Rules:**
+1. **Strict Categorization:** You must use ONLY the Types and Subtypes listed in the provided Taxonomy. Do not invent categories. Ensure the Subtype logically falls under the chosen Type. If an item does not fit the Target Family at all, output "Not [Target Family]" for both.
+2. **Translation:** Arabic translations must be natural, highly engaging, and suitable for e-commerce (not robotic, literal translations).
+3. **Missing Info:** If a specific attribute (like Brand or Size) cannot be determined from the input, write "N/A".
 
-# Ensure this matches your file name on GitHub exactly
-EXCEL_FILE = "taxonomy for gemini.xlsx" 
+---
+### 📥 Input Data:
+**Target Family:** 
+[ENTER YOUR FAMILY HERE, e.g., Toys]
 
-@st.cache_data
-def load_data():
-    if not os.path.exists(EXCEL_FILE):
-        return None
-    # Read the excel file
-    df = pd.read_excel(EXCEL_FILE)
-    # Drop rows where the Family column is empty
-    df = df.dropna(subset=[df.columns[0]])
-    return df
+**Taxonomy (Allowed Types and Subtypes):**
+[PASTE YOUR TAXONOMY LIST HERE. Example:
+- Type A: Subtype 1, Subtype 2
+- Type B: Subtype 3, Subtype 4]
 
-df = load_data()
+**SKUs to Process / Images Uploaded:**
+[PASTE YOUR LIST OF SKUS/TITLES HERE, OR ATTACH IMAGES]
 
-if df is None:
-    st.error(f"⚠️ Could not find the Excel file! Please make sure a file named `{EXCEL_FILE}` is uploaded to your GitHub repository in the same directory.")
-else:
-    # Assign columns based on position (0=Family, 1=Type, 2=Subtype)
-    fam_col, type_col, sub_col = df.columns[0], df.columns[1], df.columns[2]
-    
-    # 1. Dropdown for Family selection
-    families = sorted(df[fam_col].astype(str).unique().tolist())
-    selected_family = st.selectbox("1️⃣ Select Target Family:", families)
-    
-    # 2. Text area for SKUs/Titles input
-    skus_input = st.text_area("2️⃣ Enter SKUs or Product Titles here (one per line):", height=150)
-    
-    if selected_family:
-        # Filter dataframe by selected family
-        filtered_df = df[df[fam_col] == selected_family]
-        
-        # Group by Type and join Subtypes with commas
-        grouped = filtered_df.groupby(type_col)[sub_col].apply(
-            lambda x: ', '.join(x.dropna().astype(str).unique())
-        )
-        
-        taxonomy_lines = []
-        for t, subtypes in grouped.items():
-            taxonomy_lines.append(f"- {t}: {subtypes}")
-        
-        taxonomy_text = "\n".join(taxonomy_lines)
-        
-        # Use placeholder text if no SKUs are entered
-        skus_to_categorize = skus_input if skus_input.strip() else "[PASTE YOUR LIST OF SKUS/PRODUCT TITLES HERE]"
+---
+### 📤 Output Format:
+*Please output the results for each item using the following structure:*
 
-        # 3. The final generated Prompt
-        master_prompt = f"""Categorization Master Prompt: Please act as an expert inventory categorizer. I will provide you with a list of SKUs. You must organize them into a table with the columns: Title, Type, and Subtype.
+**Original Input:** [Insert original title or image name here]
+* **Categorization:**
+  * **Family:** [Target Family]
+  * **Type:** [Strictly from taxonomy]
+  * **Subtype:** [Strictly from taxonomy]
+* **Attributes:**
+  * **Brand:** [Extracted Brand or N/A]
+  * **Color:** [Extracted Color or N/A]
+  * **Size/Dimensions:** [Extracted Size or N/A]
+* **English Content:**
+  * **Polished Title:** [Short, catchy e-commerce title]
+  * **Description:** [One powerful paragraph describing the item]
+  * **Key Features:** 
+    - [Feature 1]
+    - [Feature 2]
+    - [Feature 3]
+* **Arabic Content (المحتوى العربي):**
+  * **Polished Title:** [Arabic translation of the title]
+  * **Description:** [Engaging Arabic translation of the description]
+  * **Key Features:**
+    - [Arabic Feature 1]
+    - [Arabic Feature 2]
+    - [Arabic Feature 3]
 
-Rules:
-1. Strictly use only the Types and Subtypes listed below.
-2. If an item is not a {selected_family.lower()} (e.g., adult apparel, baby feeding bottles), leave the Type and Subtype columns With keyword like ( Not {selected_family})
-
-Types and Subtypes:
-{taxonomy_text}
-
-SKUs to Categorize:
-{skus_to_categorize}"""
-
-        st.divider()
-        st.subheader("📝 Your Generated Prompt:")
-        st.info("💡 Hover over the top-right corner of the text box below and click the 'Copy' icon.")
-        
-        # Display the prompt with a copy button
-        st.code(master_prompt, language="markdown")
+***[Add a horizontal line `---` between each product]***
