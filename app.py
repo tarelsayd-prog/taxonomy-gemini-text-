@@ -5,9 +5,8 @@ import os
 st.set_page_config(page_title="Gemini Prompt Generator", layout="centered")
 
 st.title("🤖 Gemini Master Prompt Generator")
-st.write("اختار الـ Category، حط الداتا بتاعتك (Titles أو Image URLs)، وانسخ الأسطمبة لـ Gemini.")
+st.write("اختار الـ Category، حط الداتا بتاعتك، وانسخ الأسطمبة لـ Gemini.")
 
-# اسم ملف الإكسيل اللي موجود معاك في نفس الفولدر على GitHub
 EXCEL_FILE = "taxonomy for gemini.xlsx" 
 
 @st.cache_data
@@ -21,16 +20,14 @@ def load_data():
 df = load_data()
 
 if df is None:
-    st.error(f"⚠️️ مش قادر ألاقي ملف الإكسيل! اتأكد إنك رافع ملف اسمه `{EXCEL_FILE}` على GitHub.")
+    st.error(f"⚠️ مش قادر ألاقي ملف الإكسيل! اتأكد إنك رافع ملف اسمه `{EXCEL_FILE}` على GitHub.")
 else:
     fam_col, type_col, sub_col = df.columns[0], df.columns[1], df.columns[2]
     
-    # قائمة اختيار الـ Category (Family)
     families = sorted(df[fam_col].astype(str).unique().tolist())
     selected_family = st.selectbox("1️⃣ اختار الـ Category (Family):", families)
     
     if selected_family:
-        # تجهيز الـ Taxonomy (الأنواع والأنواع الفرعية)
         filtered_df = df[df[fam_col] == selected_family]
         grouped = filtered_df.groupby(type_col)[sub_col].apply(
             lambda x: ', '.join(x.dropna().astype(str).unique())
@@ -39,13 +36,14 @@ else:
         taxonomy_text = "\n".join(taxonomy_lines)
 
         st.write("### 2️⃣ اختار نوع الداتا بتاعتك:")
-        # عمل الـ 2 Tabs
-        tab1, tab2 = st.tabs(["📝 Text / Titles", "🖼️ Image URLs"])
+        
+        tab1, tab2 = st.tabs(["📝 Text / Titles", "🖼️ Uploaded Images"])
 
         # ==========================================
         # TAB 1: TEXT / TITLES
         # ==========================================
         with tab1:
+            st.write("استخدم التاب دي لو معاك نصوص (Titles/SKUs) بس.")
             titles_input = st.text_area("حط الـ Titles أو الـ SKUs هنا (كل واحد في سطر):", height=150, key="titles")
             titles_data = titles_input if titles_input.strip() else "[PASTE YOUR LIST OF SKUS/TITLES HERE]"
             
@@ -75,21 +73,22 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 **SKUs to Categorize:**
 {titles_data}"""
 
-            st.info("💡 اضغط على علامة النسخ (Copy) اللي هتظهر فوق على اليمين في المربع الأسود تحت.")
+            st.info("💡 اضغط على علامة النسخ (Copy) في المربع الأسود تحت، وروح حطها في Gemini.")
             st.code(text_prompt, language="markdown")
 
         # ==========================================
-        # TAB 2: IMAGE URLs
+        # TAB 2: UPLOADED IMAGES
         # ==========================================
         with tab2:
-            urls_input = st.text_area("حط روابط الصور (Image URLs) هنا (كل رابط في سطر):", height=150, key="urls")
-            urls_data = urls_input if urls_input.strip() else "[PASTE YOUR LIST OF IMAGE URLs HERE]"
+            st.write("استخدم التاب دي لو هترفع الصور بإيدك جوا شات Gemini.")
+            images_input = st.text_area("حط أسماء أو أرقام الصور هنا (اختياري - عشان ينظمهم):", height=150, key="images")
+            images_data = images_input if images_input.strip() else "[PLEASE SEE THE ATTACHED IMAGES IN THIS CHAT]"
             
             image_prompt = f"""**Role:**
 Act as an expert e-commerce visual inventory categorizer and listing generator.
 
 **Task:**
-I will provide you with a target Product Family, a strict Taxonomy (Types and Subtypes), and a list of Image URLs. You must deeply analyze each product image to categorize it perfectly and generate a complete bilingual e-commerce profile.
+I will provide you with a target Product Family, a strict Taxonomy (Types and Subtypes), and attached product images. You must deeply analyze each product image to categorize it perfectly and generate a complete bilingual e-commerce profile.
 
 **Rules:**
 1. **Strict Categorization:** You must categorize the product using ONLY the Types and Subtypes listed in the provided Taxonomy. Ensure the Subtype strictly falls under the chosen Type. Do not invent new categories. 
@@ -108,13 +107,13 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 {taxonomy_text}
 
 **Images to Process:**
-{urls_data}
+{images_data}
 
 ---
 ### 📤 Output Format:
-*Please analyze each image URL and output the results using the EXACT following structure:*
+*Please analyze each attached image and output the results using the EXACT following structure:*
 
-**Original Input:** [Insert Image URL here]
+**Original Input:** [Insert Image Name/Number here]
 * **Categorization:**
   * **Family:** {selected_family}
   * **Type:** [Strictly from taxonomy]
@@ -140,5 +139,5 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 
 ***[Add a horizontal line `---` between each product]***"""
 
-            st.info("💡 اضغط على علامة النسخ (Copy) اللي هتظهر فوق على اليمين في المربع الأسود تحت.")
+            st.info("💡 انسخ الأسطمبة دي، وارفع معاها الصور بتاعتك في شات Gemini.")
             st.code(image_prompt, language="markdown")
