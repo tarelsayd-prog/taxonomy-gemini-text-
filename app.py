@@ -56,8 +56,8 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 **Rules:**
 1. Strictly use ONLY the Types and Subtypes listed in the provided Taxonomy. Do not invent, guess, or modify the spelling of any categories.
 2. Ensure the Subtype you select falls exactly under its designated Type.
-3. If an item does not logically fit into the Target Family, leave the Type and Subtype columns with the exact phrase: "Not {selected_family}".
-4. **Output Requirement:** You MUST use Python to generate and provide a downloadable Excel file (.xlsx) with the categorized data.
+3. **RESILIENCE & CONTINUATION:** If an item does not logically fit into the Target Family or cannot be categorized, DO NOT STOP the process. Simply leave the Type and Subtype columns with the exact phrase "Not {selected_family}" and continue processing all remaining items until the end of the list.
+4. **STRICT OUTPUT REQUIREMENT:** DO NOT just give me the Python code to run locally. You MUST execute the Python code internally using your Advanced Data Analysis capabilities and provide a direct, clickable download link for the final .xlsx file here in the chat.
 
 **Excel Columns Required:**
 1. Original Title
@@ -94,12 +94,12 @@ I will provide you with a target Product Family, a strict Taxonomy (Types and Su
 
 **Rules:**
 1. **Strict Categorization:** You must categorize the product using ONLY the Types and Subtypes listed in the provided Taxonomy. Ensure the Subtype strictly falls under the chosen Type. Do not invent new categories. 
-2. **Out of Scope:** If the image clearly shows an item that does not belong to the Target Family at all, output "Not {selected_family}" for both Type and Subtype.
+2. **RESILIENCE & CONTINUATION:** If an image clearly shows an item that does not belong to the Target Family, or if you encounter any issue identifying it, DO NOT STOP. Mark its Type and Subtype as "Not {selected_family}", fill attributes with "N/A", and seamlessly continue processing the rest of the uploaded images.
 3. **Visual Extraction:** Carefully examine the image to extract the Brand, Color, and Size/Dimensions. If an attribute cannot be determined from the image, output "N/A".
 4. **Content Generation:** Write a catchy e-commerce title and a powerful description in English.
 5. **Translation:** Provide a natural, highly engaging Arabic translation for the title, description, and features.
 6. **Image Identification:** You MUST use the exact original filename of each uploaded image as the "Original Filename" column. Do not skip this.
-7. **Output Requirement:** You MUST use Python to generate and provide a downloadable Excel file (.xlsx) containing all the extracted and generated data. Do not just print the output; you must generate the file.
+7. **STRICT OUTPUT REQUIREMENT:** DO NOT just give me the Python code to run locally. You MUST execute the Python code internally using your Advanced Data Analysis capabilities and provide a direct, clickable download link for the final .xlsx file here in the chat.
 
 **Excel Columns Required:**
 1. Original Filename
